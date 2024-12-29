@@ -6,174 +6,294 @@ const HTML_CONTENT = `<!DOCTYPE html>
 <title>Card Tab</title>
 <style>
 body {
-font-family: Arial, sans-serif;
-// background-color: #f4f4f4;
-background-color: #d8eac4;
-margin: 0;
-padding: 20px;
-display: flex;
-flex-direction: column;
-align-items: center;
-transition: background-color 0.3s ease;
-}
-.card-container {
-display: grid;
-grid-template-columns: repeat(6, 1fr);
-gap: 10px;
-}
-.card {
-display: flex;
-flex-direction: column;
-position: relative;
-background-color: #a0c9e5;
-padding: 10px;
-border-radius: 10px;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-cursor: grab;
-transition: transform 0.2s ease, box-shadow 0.2s ease;
-width: 200px;
-height: auto;
+  font-family: Arial, sans-serif;
+  background-color: #d8eac4;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background-color 0.3s ease;
 }
 
-.card-top {
-display: flex;
-align-items: center;
-margin-bottom: 5px;
+/* 密码输入界面样式 */
+#password-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.card-icon {
-width: 24px;
-height: 24px;
-margin-right: 10px;
+.numpad-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
 }
 
-.card-title {
-font-size: 16px;
-font-weight: bold;
+.numpad-title {
+  margin-bottom: 20px;
+  font-size: 18px;
 }
 
-.card-url {
-color: #555;
-font-size: 12px;
-word-break: break-all;
+.password-dots {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
-.card.dragging {
-opacity: 0.8;
-transform: scale(1.05);
-cursor: grabbing;
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ddd;
+  display: inline-block;
 }
-.card:hover {
-transform: translateY(-5px);
-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+.dot.active {
+  background: #007bff;
 }
+
+.numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0 auto;
+}
+
+.num-btn {
+  padding: 15px;
+  font-size: 20px;
+  border: 1px solid #ddd;
+  background: #f8f9fa;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.num-btn:hover {
+  background: #e9ecef;
+}
+
+.clear-btn {
+  background: #ffc107;
+  color: #000;
+}
+
 .delete-btn {
-position: absolute;
-top: -10px;
-right: -10px;
-background-color: red;
-color: white;
-border: none;
-border-radius: 50%;
-width: 20px;
-height: 20px;
-text-align: center;
-font-size: 14px;
-line-height: 20px;
-cursor: pointer;
-display: none;
-}
-.admin-controls {
-position: fixed;
-top: 10px;
-right: 10px;
-font-size: 60%;
-}
-.admin-controls input {
-padding: 5px;
-font-size: 60%;
-}
-.admin-controls button {
-padding: 5px 10px;
-font-size: 60%;
-margin-left: 10px;
-}
-.add-remove-controls {
-display: none;
-margin-top: 10px;
-}
-.round-btn {
-background-color: #007bff;
-color: white;
-border: none;
-border-radius: 50%;
-width: 40px;
-height: 40px;
-text-align: center;
-font-size: 24px;
-line-height: 40px;
-cursor: pointer;
-margin: 0 10px;
-}
-#theme-toggle {
-position: fixed;
-bottom: 10px;
-left: 10px;
-background-color: #007bff;
-color: white;
-border: none;
-border-radius: 50%;
-width: 40px;
-height: 40px;
-text-align: center;
-font-size: 24px;
-line-height: 40px;
-cursor: pointer;
-}
-#dialog-overlay {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgba(0, 0, 0, 0.5);
-justify-content: center;
-align-items: center;
-}
-#dialog-box {
-background: white;
-padding: 20px;
-border-radius: 10px;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-#dialog-box label {
-display: block;
-margin-bottom: 5px;
-}
-#dialog-box input, #dialog-box select {
-width: 100%;
-padding: 5px;
-margin-bottom: 10px;
-}
-#dialog-box button {
-padding: 5px 10px;
-margin-right: 10px;
+  background: #dc3545;
+  color: #fff;
 }
 
-.section {
-margin-bottom: 20px;
-}
-
-.section-title {
-font-size: 24px;
-font-weight: bold;
-color: #333;
-margin-bottom: 10px;
-}
+/* 原有的样式保持不变 */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+  
+  .card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: #a0c9e5;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: grab;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 200px;
+    height: auto;
+  }
+  
+  .card-top {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .card-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
+  
+  .card-title {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .card-url {
+    color: #555;
+    font-size: 12px;
+    word-break: break-all;
+  }
+  
+  .card.dragging {
+    opacity: 0.8;
+    transform: scale(1.05);
+    cursor: grabbing;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .delete-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+    display: none;
+  }
+  
+  .admin-controls {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 60%;
+  }
+  
+  .admin-controls input {
+    padding: 5px;
+    font-size: 60%;
+  }
+  
+  .admin-controls button {
+    padding: 5px 10px;
+    font-size: 60%;
+    margin-left: 10px;
+  }
+  
+  .add-remove-controls {
+    display: none;
+    margin-top: 10px;
+  }
+  
+  .round-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 24px;
+    line-height: 40px;
+    cursor: pointer;
+    margin: 0 10px;
+  }
+  
+  #theme-toggle {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 24px;
+    line-height: 40px;
+    cursor: pointer;
+  }
+  
+  #dialog-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #dialog-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  #dialog-box label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  #dialog-box input, #dialog-box select {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+  
+  #dialog-box button {
+    padding: 5px 10px;
+    margin-right: 10px;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+  }
+  
+  .section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
 </style>
 </head>
 <body>
+<!-- 密码输入界面 -->
+<div id="password-overlay">
+  <div class="numpad-container">
+    <div class="numpad-title">请输入密码</div>
+    <div class="password-dots">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+    <div class="numpad-grid">
+      <button class="num-btn" data-num="1">1</button>
+      <button class="num-btn" data-num="2">2</button>
+      <button class="num-btn" data-num="3">3</button>
+      <button class="num-btn" data-num="4">4</button>
+      <button class="num-btn" data-num="5">5</button>
+      <button class="num-btn" data-num="6">6</button>
+      <button class="num-btn" data-num="7">7</button>
+      <button class="num-btn" data-num="8">8</button>
+      <button class="num-btn" data-num="9">9</button>
+      <button class="num-btn clear-btn">清除</button>
+      <button class="num-btn" data-num="0">0</button>
+      <button class="num-btn delete-btn">←</button>
+    </div>
+  </div>
+</div>
+
+<!-- 原有的HTML内容 -->
 <h1>我的导航</h1>
 
 <div class="admin-controls">
@@ -212,6 +332,86 @@ margin-bottom: 10px;
 </div>
 
 <script>
+// 密码验证相关代码
+let currentPassword = '';
+const PASSWORD_LENGTH = 4;
+
+function initNumpad() {
+  const numButtons = document.querySelectorAll('.num-btn');
+  numButtons.forEach(button => {
+    button.addEventListener('click', handleNumpadClick);
+  });
+}
+
+function handleNumpadClick(e) {
+  const button = e.target;
+  
+  if (button.classList.contains('clear-btn')) {
+    clearPassword();
+  } else if (button.classList.contains('delete-btn')) {
+    deleteLastDigit();
+  } else {
+    const num = button.dataset.num;
+    if (num !== undefined) {
+      addDigit(num);
+    }
+  }
+}
+
+function addDigit(digit) {
+  if (currentPassword.length < PASSWORD_LENGTH) {
+    currentPassword += digit;
+    updatePasswordDots();
+    
+    if (currentPassword.length === PASSWORD_LENGTH) {
+      verifyPassword();
+    }
+  }
+}
+
+function deleteLastDigit() {
+  currentPassword = currentPassword.slice(0, -1);
+  updatePasswordDots();
+}
+
+function clearPassword() {
+  currentPassword = '';
+  updatePasswordDots();
+}
+
+function updatePasswordDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index < currentPassword.length);
+  });
+}
+
+async function verifyPassword() {
+  try {
+    const response = await fetch('/api/verifyNumPassword', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: currentPassword })
+    });
+    
+    const result = await response.json();
+    if (result.valid) {
+      document.getElementById('password-overlay').style.display = 'none';
+    } else {
+      alert('密码错误，请重试');
+      clearPassword();
+    }
+  } catch (error) {
+    console.error('验证密码时出错:', error);
+    alert('验证失败，请重试');
+    clearPassword();
+  }
+}
+
+// 页面加载时初始化数字键盘
+document.addEventListener('DOMContentLoaded', initNumpad);
+
+// 原有的JavaScript代码
 let isAdmin = false; 
 let removeMode = false; 
 let isDarkTheme = false; 
@@ -596,41 +796,147 @@ return result.valid;
 loadLinks();
 </script>
 </body>
-</html>
-`;
+</html>`;
 
+// Worker代码
 export default {
-async fetch(request, env) {
-const url = new URL(request.url);
+  async fetch(request, env) {
+    try {
+      const url = new URL(request.url);
+      
+      // 处理根路径请求
+      if (url.pathname === '/') {
+        return new Response(HTML_CONTENT, {
+          headers: { 
+            'Content-Type': 'text/html',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      }
 
-if (url.pathname === '/') {
-return new Response(HTML_CONTENT, {
-headers: { 'Content-Type': 'text/html' }
-});
-}
+      // 处理密码验证请求
+      if (url.pathname === '/api/verifyNumPassword' && request.method === 'POST') {
+        try {
+          const { password } = await request.json();
+          const correctPassword = env.NUM_PASSWORD || '123456'; // 添加默认密码
+          const isValid = password === correctPassword;
+          
+          return new Response(JSON.stringify({ valid: isValid }), {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        } catch (error) {
+          return new Response(JSON.stringify({ error: 'Invalid request body' }), {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        }
+      }
 
-if (url.pathname === '/api/getLinks') {
-const userId = url.searchParams.get('userId');
-const links = await env.CARD_ORDER.get(userId); 
-return new Response(links || JSON.stringify([]), { status: 200 });
-}
+      // 处理链接获取请求
+      if (url.pathname === '/api/getLinks') {
+        const userId = url.searchParams.get('userId') || 'testUser';
+        try {
+          const links = await env.CARD_ORDER.get(userId);
+          return new Response(links || '[]', {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        } catch (error) {
+          return new Response('[]', {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        }
+      }
 
-if (url.pathname === '/api/saveOrder' && request.method === 'POST') {
-const { userId, links } = await request.json();
-await env.CARD_ORDER.put(userId, JSON.stringify(links));
-return new Response(JSON.stringify({ success: true }), { status: 200 });
-}
+      // 处理保存顺序请求
+      if (url.pathname === '/api/saveOrder' && request.method === 'POST') {
+        try {
+          const { userId, links } = await request.json();
+          await env.CARD_ORDER.put(userId || 'testUser', JSON.stringify(links));
+          return new Response(JSON.stringify({ success: true }), {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        } catch (error) {
+          return new Response(JSON.stringify({ error: 'Failed to save order' }), {
+            status: 500,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        }
+      }
 
-if (url.pathname === '/api/verifyPassword' && request.method === 'POST') { 
-const { password } = await request.json();
-const isValid = password === env.ADMIN_PASSWORD; // 从环境变量中获取密码
-return new Response(JSON.stringify({ valid: isValid }), {
-status: isValid ? 200 : 403,
-headers: { 'Content-Type': 'application/json' },
-});
-}
+      // 处理管理员密码验证请求
+      if (url.pathname === '/api/verifyPassword' && request.method === 'POST') {
+        try {
+          const { password } = await request.json();
+          const isValid = password === (env.ADMIN_PASSWORD || 'admin'); // 添加默认管理员密码
+          return new Response(JSON.stringify({ valid: isValid }), {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        } catch (error) {
+          return new Response(JSON.stringify({ error: 'Invalid request body' }), {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        }
+      }
 
-return new Response('Not Found', { status: 404 });
-}
+      // 处理 OPTIONS 请求（CORS预检请求）
+      if (request.method === 'OPTIONS') {
+        return new Response(null, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        });
+      }
+
+      // 处理未知路径
+      return new Response('Not Found', { 
+        status: 404,
+        headers: {
+          'Content-Type': 'text/plain',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+
+    } catch (error) {
+      // 处理所有未捕获的错误
+      return new Response(JSON.stringify({ error: 'Internal Server Error', message: error.message }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+  }
 };
-
